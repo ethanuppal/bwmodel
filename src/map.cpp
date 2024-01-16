@@ -5,9 +5,9 @@
 #include "map.h"
 
 namespace bwmodel {
-    Map::Map(MapGrid& grid): grid(grid) {
+    Map::Map(MapGrid<RegionSet>& grid): grid(grid) {
         assert(!grid.empty());
-        for (MapRow& row: grid) {
+        for (MapRow<RegionSet>& row: grid) {
             assert(row.size() == grid[0].size());
         }
     }
@@ -53,8 +53,8 @@ namespace bwmodel {
         }
 
         /** Prepare map to return */
-        MapRow grid_row(width, RegionSet::UNINIT);
-        MapGrid grid(height, grid_row);
+        MapRow<RegionSet> grid_row(width, RegionSet::UNINIT);
+        MapGrid<RegionSet> grid(height, grid_row);
         std::unique_ptr<Map> result(new Map(grid));
 
         /** Parse grid */

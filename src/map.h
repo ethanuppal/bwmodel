@@ -9,6 +9,7 @@
 #include <memory>
 #include <cassert>
 #include <stdexcept>
+#include "player.h"
 
 namespace bwmodel {
     /** A numeric value in the unit of Minecraft blocks, each of which
@@ -30,14 +31,14 @@ namespace bwmodel {
         DIAMOND = 1 << 3,
         MIDDLE = 1 << 4,
 
-        RED = 1 << 8,
-        BLUE = 1 << 9,
-        GREEN = 1 << 10,
-        AQUA = 1 << 11,
-        YELLOW = 1 << 12,
-        WHITE = 1 << 13,
-        BLACK = 1 << 14,
-        PINK = 1 << 15,
+        RED = 1 << *PlayerColor::RED,
+        BLUE = 1 << *PlayerColor::BLUE,
+        GREEN = 1 << *PlayerColor::GREEN,
+        AQUA = 1 << *PlayerColor::AQUA,
+        YELLOW = 1 << *PlayerColor::YELLOW,
+        WHITE = 1 << *PlayerColor::WHITE,
+        BLACK = 1 << *PlayerColor::BLACK,
+        PINK = 1 << *PlayerColor::PINK,
 
         INVALID = 0,
         UNINIT = 1
@@ -53,20 +54,23 @@ namespace bwmodel {
         using std::runtime_error::runtime_error;
     };
 
+    template<typename T>
+    using MapRow = std::vector<T>;
+
+    template<typename T>
+    using MapGrid = std::vector<MapRow<T>>;
+
     /** Region information. */
     class Map {
-        using MapRow = std::vector<RegionSet>;
-        using MapGrid = std::vector<MapRow>;
-
         /** The internal grid representation of the map in row-major order. */
-        MapGrid grid;
+        MapGrid<RegionSet> grid;
 
         /**
          * Constructs a new map from the given `grid`.
          *
          * @pre `grid` is in row-major order and has at least one row.
          */
-        Map(MapGrid& grid);
+        Map(MapGrid<RegionSet>& grid);
 
     public:
         /** Width of the map. */
