@@ -2,17 +2,15 @@
 
 #include <iostream>
 #include <cassert>
-#include "map.h"
+#include "bwmodel.h"
+using namespace bwmodel;
 
 int main() {
     try {
-        std::unique_ptr<bwmodel::Map> map =
-            bwmodel::Map::load_from("./data/example.bwmap");
-        assert(map->regions_at(0, 2)
-               == (bwmodel::RegionSet::PINK | bwmodel::RegionSet::BASE));
-        assert(map->regions_at(4, 2) == (bwmodel::RegionSet::MIDDLE));
-        assert(map->regions_at(7, 7) == (bwmodel::RegionSet::DIAMOND));
-    } catch (const bwmodel::MapLoadError& error) {
+        std::unique_ptr<Map> map = Map::load_from("./data/example.bwmap");
+        Game game(std::move(map));
+
+    } catch (const MapLoadError& error) {
         std::cerr << "MapLoadError: " << error.what() << '\n';
     }
     return 0;

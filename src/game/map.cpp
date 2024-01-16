@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include <iostream>
-#include "map.h"
+#include "game/map.h"
 
 namespace bwmodel {
     Map::Map(Grid<RegionSet>& grid): grid(grid) {

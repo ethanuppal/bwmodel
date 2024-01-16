@@ -5,10 +5,11 @@
 #include <array>
 #include <memory>
 #include "grid.h"
-#include "player.h"
-#include "map.h"
+#include "game/player.h"
+#include "game/map.h"
 
 namespace bwmodel {
+    /** A two-dimensional probability distribution. */
     class HeatMap : public GridInterface<double, int> {
         Grid<double> distribution;
 
@@ -43,10 +44,5 @@ namespace bwmodel {
         /** Creates a uniformly-distributed heat map with dimensions `width` and
          * `height`. */
         static std::unique_ptr<HeatMap> uniform(int width, int height);
-    };
-    class Model {
-        std::array<HeatMap, PLAYER_COUNT> location;
-
-    public:
     };
 }

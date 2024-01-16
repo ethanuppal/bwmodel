@@ -1,7 +1,7 @@
 // Copyright (C) 2024 Ethan Uppal. All rights reserved.
 
 #include <cassert>
-#include "model.h"
+#include "heatmap.h"
 
 namespace bwmodel {
     HeatMap::HeatMap(Grid<double>& distribution): distribution(distribution) {

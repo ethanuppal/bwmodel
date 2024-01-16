@@ -8,8 +8,8 @@
 #include <memory>
 #include <cassert>
 #include <stdexcept>
-#include "grid.h"
-#include "player.h"
+#include "core/grid.h"
+#include "game/player.h"
 
 namespace bwmodel {
     /** A numeric value in the unit of Minecraft blocks, each of which
@@ -49,12 +49,13 @@ namespace bwmodel {
                                       | static_cast<RegionSetBacking>(rhs));
     }
 
+    /** @see Map::load_from */
     class MapLoadError : public std::runtime_error {
     public:
         using std::runtime_error::runtime_error;
     };
 
-    /** Region information. */
+    /** Defines the regions in a bedwars map. */
     class Map : public GridInterface<RegionSet, blocks_t> {
         /** The internal grid representation of the map in row-major order. */
         Grid<RegionSet> grid;

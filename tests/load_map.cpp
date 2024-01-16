@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <cassert>
-#include "map.h"
+#include "bwmodel.h"
 
 int main() {
     std::unique_ptr<bwmodel::Map> map =
