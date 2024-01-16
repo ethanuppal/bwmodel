@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "map.h": "cpp"
+    },
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_style": "file"
+}
