@@ -5,10 +5,10 @@
 #include <cstdint>
 #include <cstdbool>
 #include <string>
-#include <vector>
 #include <memory>
 #include <cassert>
 #include <stdexcept>
+#include "grid.h"
 #include "player.h"
 
 namespace bwmodel {
@@ -31,14 +31,14 @@ namespace bwmodel {
         DIAMOND = 1 << 3,
         MIDDLE = 1 << 4,
 
-        RED = 1 << *PlayerColor::RED,
-        BLUE = 1 << *PlayerColor::BLUE,
-        GREEN = 1 << *PlayerColor::GREEN,
-        AQUA = 1 << *PlayerColor::AQUA,
-        YELLOW = 1 << *PlayerColor::YELLOW,
-        WHITE = 1 << *PlayerColor::WHITE,
-        BLACK = 1 << *PlayerColor::BLACK,
-        PINK = 1 << *PlayerColor::PINK,
+        RED = 1 << (8 + *PlayerColor::RED),
+        BLUE = 1 << (8 + *PlayerColor::BLUE),
+        GREEN = 1 << (8 + *PlayerColor::GREEN),
+        AQUA = 1 << (8 + *PlayerColor::AQUA),
+        YELLOW = 1 << (8 + *PlayerColor::YELLOW),
+        WHITE = 1 << (8 + *PlayerColor::WHITE),
+        BLACK = 1 << (8 + *PlayerColor::BLACK),
+        PINK = 1 << (8 + *PlayerColor::PINK),
 
         INVALID = 0,
         UNINIT = 1
@@ -54,31 +54,22 @@ namespace bwmodel {
         using std::runtime_error::runtime_error;
     };
 
-    template<typename T>
-    using MapRow = std::vector<T>;
-
-    template<typename T>
-    using MapGrid = std::vector<MapRow<T>>;
-
     /** Region information. */
-    class Map {
+    class Map : public GridInterface<RegionSet, blocks_t> {
         /** The internal grid representation of the map in row-major order. */
-        MapGrid<RegionSet> grid;
+        Grid<RegionSet> grid;
 
         /**
          * Constructs a new map from the given `grid`.
          *
          * @pre `grid` is in row-major order and has at least one row.
          */
-        Map(MapGrid<RegionSet>& grid);
+        Map(Grid<RegionSet>& grid);
+
+    protected:
+        const Grid<RegionSet>& backing() const;
 
     public:
-        /** Width of the map. */
-        blocks_t width() const;
-
-        /** Height of the map. */
-        blocks_t height() const;
-
         /**
          * Adds the regions given by `regions` to the the given (`x`, `y`)
          * coordinates. If the current region is `RegionSet::UNINIT`, it gets

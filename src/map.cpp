@@ -5,19 +5,13 @@
 #include "map.h"
 
 namespace bwmodel {
-    Map::Map(MapGrid<RegionSet>& grid): grid(grid) {
+    Map::Map(Grid<RegionSet>& grid): grid(grid) {
         assert(!grid.empty());
-        for (MapRow<RegionSet>& row: grid) {
-            assert(row.size() == grid[0].size());
-        }
+        assert_grid_invariant();
     }
 
-    blocks_t Map::width() const {
-        return grid[0].size();
-    }
-
-    blocks_t Map::height() const {
-        return grid.size();
+    const Grid<RegionSet>& Map::backing() const {
+        return grid;
     }
 
     bool Map::update_region(blocks_t x, blocks_t y, RegionSet regions) {
@@ -53,8 +47,8 @@ namespace bwmodel {
         }
 
         /** Prepare map to return */
-        MapRow<RegionSet> grid_row(width, RegionSet::UNINIT);
-        MapGrid<RegionSet> grid(height, grid_row);
+        GridRow<RegionSet> grid_row(width, RegionSet::UNINIT);
+        Grid<RegionSet> grid(height, grid_row);
         std::unique_ptr<Map> result(new Map(grid));
 
         /** Parse grid */
