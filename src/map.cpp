@@ -1,11 +1,11 @@
 // Copyright (C) 2024 Ethan Uppal. All rights reserved.
 
-#include <stdexcept>
 #include <fstream>
+#include <iostream>
 #include "map.h"
 
 namespace bwmodel {
-    Map::Map(MapGrid grid): grid(grid) {
+    Map::Map(MapGrid& grid): grid(grid) {
         assert(!grid.empty());
         for (MapRow& row: grid) {
             assert(row.size() == grid[0].size());
@@ -25,10 +25,11 @@ namespace bwmodel {
         if (current == RegionSet::INVALID) {
             return false;
         } else {
-            RegionSetBacking combined =
-                static_cast<RegionSetBacking>(current)
-                | static_cast<RegionSetBacking>(regions);
-            grid[x][y] = static_cast<RegionSet>(combined);
+            if (current == RegionSet::UNINIT) {
+                grid[y][x] = regions;
+            } else {
+                grid[y][x] = current | regions;
+            }
             return true;
         }
     }
@@ -37,7 +38,7 @@ namespace bwmodel {
         if (x < 0 || y < 0 || x >= width() || y >= height()) {
             return RegionSet::INVALID;
         }
-        return grid[x][y];
+        return grid[y][x];
     }
 
     std::unique_ptr<Map> Map::load_from(const std::string& path) {
@@ -52,42 +53,61 @@ namespace bwmodel {
         }
 
         /** Prepare map to return */
-        MapRow grid_row(width, RegionSet::INVALID);
+        MapRow grid_row(width, RegionSet::UNINIT);
         MapGrid grid(height, grid_row);
         std::unique_ptr<Map> result(new Map(grid));
 
         /** Parse grid */
-        for (blocks_t i = 0; i < height; i++) {
-            for (blocks_t j = 0; j < width; j++) {
+        for (blocks_t j = 0; j < height; j++) {
+            for (blocks_t i = 0; i < width; i++) {
                 std::string entry;
                 in >> entry;
 
                 if (in.fail() || in.bad()) {
                     throw MapLoadError(
-                        "Error reading entry at (" + std::to_string(i) + ", "
-                        + std::to_string(j) + ") in file: " + path);
+                        "Error reading entry at (x=" + std::to_string(i)
+                        + ", y=" + std::to_string(j) + ") in file: " + path);
                 }
 
                 for (char region: entry) {
                     switch (toupper(region)) {
                         case 'B':
-                            result->update_region(i, j, RegionSet::BASE);
+                            assert(result->update_region(i, j,
+                                RegionSet::BASE));
                             break;
                         case 'E':
-                            result->update_region(i, j, RegionSet::EMPTY);
+                            assert(result->update_region(i, j,
+                                RegionSet::EMPTY));
                             break;
                         case 'D':
-                            result->update_region(i, j, RegionSet::DIAMOND);
+                            assert(result->update_region(i, j,
+                                RegionSet::DIAMOND));
                             break;
                         case 'M':
-                            result->update_region(i, j, RegionSet::MIDDLE);
+                            assert(result->update_region(i, j,
+                                RegionSet::MIDDLE));
                             break;
-                        default:
-                            // ignored
+                        default: {
+                            if (region >= '1' && region <= '8') {
+                                RegionSetBacking color =
+                                    1 << (8 + (region - '1'));
+                                assert(result->update_region(i, j,
+                                    static_cast<RegionSet>(color)));
+                            }
                             break;
+                        }
                     }
+                }
+
+                if (result->regions_at(i, j) == RegionSet::UNINIT) {
+                    throw MapLoadError("Error parsing entry '" + entry
+                                       + "' at (x=" + std::to_string(i)
+                                       + ", y=" + std::to_string(j)
+                                       + ") in file: " + path);
                 }
             }
         }
+
+        return result;
     }
 }

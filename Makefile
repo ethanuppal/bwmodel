@@ -4,7 +4,7 @@ SRCDIR		:= ./src
 INCLUDEDIR	:= ./src
 
 CC			:= $(shell which g++-13 || \
-					   which g++ || which clang)
+                       which g++ || which clang)
 CFLAGS		:= -std=c++17 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
 CDEBUG		:= -g
 CRELEASE	:= -O2 -DRELEASE_BUILD
@@ -15,7 +15,6 @@ CFLAGS 		+= $(CDEBUG)
 
 SRC			:= $(shell find $(SRCDIR) -name "*.cpp" -type f)
 OBJ			:= $(SRC:.cpp=.o)
-DEPS		:= $(shell find $(SRCDIR) -name "*.h" -type f)
 
 $(TARGET): main.cpp $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -24,11 +23,9 @@ $(TARGET): main.cpp $(OBJ)
 	@echo 'Compiling $@'
 	$(CC) $(CFLAGS) -MMD -MP $< -c -o $@
 
--include $(DEPS)
-
 .PHONY: clean
 clean:
-	rm -rf $(OBJ) $(TARGET) $(DEPS) $(shell find . -name "*.dSYM")
+	rm -rf $(OBJ) $(TARGET) $(shell find . -name "*.dSYM")
 
 .PHONY: run
 run: $(TARGET)
