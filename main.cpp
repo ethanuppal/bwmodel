@@ -5,7 +5,6 @@
 #include "map.h"
 
 int main() {
-    // your code here
     try {
         std::unique_ptr<bwmodel::Map> map =
             bwmodel::Map::load_from("./data/example.bwmap");

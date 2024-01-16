@@ -2,6 +2,7 @@
 
 SRCDIR		:= ./src
 INCLUDEDIR	:= ./src
+TESTSDIR	:= ./tests
 
 CC			:= $(shell which g++-13 || \
                        which g++ || which clang)
@@ -10,14 +11,11 @@ CDEBUG		:= -g
 CRELEASE	:= -O2 -DRELEASE_BUILD
 TARGET		:= main
 
-# CFLAGS 		+= $(CRELEASE)
-CFLAGS 		+= $(CDEBUG)
-
 SRC			:= $(shell find $(SRCDIR) -name "*.cpp" -type f)
 OBJ			:= $(SRC:.cpp=.o)
 
 $(TARGET): main.cpp $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(CDEBUG) $^ -o $@
 
 %.o: %.cpp
 	@echo 'Compiling $@'
@@ -30,3 +28,12 @@ clean:
 .PHONY: run
 run: $(TARGET)
 	./$(TARGET)
+
+.PHONY: test
+test: $(OBJ)
+	@for f in $(TESTSDIR)/*; do \
+		echo "  testing $$f"; \
+		$(CC) $(CFLAGS) "$$f" $^ -o $(TESTSDIR)/tmpexec; \
+		$(TESTSDIR)/tmpexec && printf "\033[32m+ test $$f passed\033[m\n" || printf "\033[31m- test $$f failed\033[m\n"; \
+	done; \
+	rm -rf $(TESTSDIR)/tmpexec
