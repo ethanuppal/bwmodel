@@ -50,7 +50,7 @@ public:
 #if !defined(RELEASE_BUILD) && !defined(NO_LOGGING)
         if (main_enabled) {
             if (has_location_info) {
-                out << "[LOG:" << location_info.func << "] ";
+                out << "[" << location_info.func << "] ";
                 has_location_info = false;
             }
             out << val;
