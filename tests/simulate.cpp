@@ -6,12 +6,12 @@
 using namespace bwmodel;
 
 int main() {
+    Logger::main_enabled = false;
+
     try {
-        // create game for map
         std::unique_ptr<Map> map = Map::load_from("./data/example.bwmap");
         Game game(std::move(map));
 
-        // we want to test our v1 model
         std::shared_ptr<GameDelegate> model = Model::v1::make();
         game.attach(model);
 
@@ -35,6 +35,12 @@ int main() {
         }
 
         simulator.simulate(game);
+
+        for (int i = 0; i < PLAYER_COUNT; i++) {
+            PlayerColor player = static_cast<PlayerColor>(i);
+            assert(game.player_has_bed(player)
+                   == (player == PlayerColor::BLUE));
+        }
     } catch (const MapLoadError& error) {
         std::cerr << "MapLoadError: " << error.what() << '\n';
         return 1;

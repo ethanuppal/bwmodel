@@ -68,7 +68,7 @@ namespace bwmodel {
         Map(Grid<RegionSet>& grid);
 
     protected:
-        const Grid<RegionSet>& backing() const;
+        const Grid<RegionSet>& backing() const override;
 
     public:
         /**
@@ -94,4 +94,9 @@ namespace bwmodel {
          */
         static std::unique_ptr<Map> load_from(const std::string& path);
     };
+
+    namespace RegionSetHelper {
+        /** Retrieves the region mask representing the player color `color`. */
+        RegionSet from(PlayerColor color);
+    }
 }

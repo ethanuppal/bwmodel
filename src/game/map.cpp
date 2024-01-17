@@ -104,4 +104,8 @@ namespace bwmodel {
 
         return result;
     }
+
+    RegionSet RegionSetHelper::from(PlayerColor color) {
+        return static_cast<RegionSet>(1 << (8 + *color));
+    }
 }

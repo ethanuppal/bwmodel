@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include <array>
 #include <memory>
+#include <vector>
+#include <utility>
 #include "grid.h"
 #include "game/player.h"
 #include "game/map.h"
@@ -25,11 +26,11 @@ namespace bwmodel {
         double average(int x1, int y1, int x2, int y2);
 
     protected:
-        const Grid<double>& backing() const;
+        const Grid<double>& backing() const override;
 
     public:
-        /** Concentrates all of the distribution at the point (`x`, `y`). */
-        void concentrate(int x, int y);
+        /** Concentrates all of the distribution at the given points. */
+        void concentrate_at(std::vector<std::pair<int, int>> points);
 
         /** Assigns each point in the heat map to the average of its neighbors
          * within a square of size `kernel_radius`. */

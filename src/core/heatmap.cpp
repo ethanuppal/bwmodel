@@ -29,13 +29,16 @@ namespace bwmodel {
         return sum / count;
     }
 
-    void HeatMap::concentrate(int x, int y) {
+    void HeatMap::concentrate_at(std::vector<std::pair<int, int>> points) {
         for (int j = 0; j < height(); j++) {
             for (int i = 0; i < width(); i++) {
                 distribution[j][i] = 0;
             }
         }
-        distribution[y][x] = 1;
+        const double fill = 1.0 / (double)points.size();
+        for (std::pair<int, int>& point: points) {
+            distribution[point.second][point.first] = fill;
+        }
     }
 
     void HeatMap::filter(int kernel_radius) {
@@ -69,7 +72,7 @@ namespace bwmodel {
 
     std::unique_ptr<HeatMap> HeatMap::uniform(int width, int height) {
         // TODO: fix implementation for numerical stability
-        const double fill = 1 / (double)(width * height);
+        const double fill = 1.0 / (double)(width * height);
 
         GridRow<double> grid_row(width, fill);
         Grid<double> grid(height, grid_row);

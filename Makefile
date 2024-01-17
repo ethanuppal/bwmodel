@@ -15,7 +15,7 @@ SRC			:= $(shell find $(SRCDIR) -name "*.cpp" -type f)
 OBJ			:= $(SRC:.cpp=.o)
 
 $(TARGET): main.cpp $(OBJ)
-	$(CC) $(CFLAGS) $(CDEBUG) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@
 
 %.o: %.cpp
 	@echo 'Compiling $@'
@@ -26,10 +26,11 @@ clean:
 	rm -rf $(OBJ) $(TARGET) $(shell find . -name "*.dSYM")
 
 .PHONY: run
-run: $(TARGET)
+run: $(TARGET) $(OBJ)
 	./$(TARGET)
 
 .PHONY: test
+test: CFLAGS += -DNO_LOGGING
 test: $(OBJ)
 	@for f in $(TESTSDIR)/*; do \
 		echo "  testing $$f"; \

@@ -7,3 +7,6 @@
 #include "game/player.h"
 #include "game/map.h"
 #include "game/game.h"
+#include "game/sim.h"
+#include "models/v1.h"
+#include "util/logger.h"

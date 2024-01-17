@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace bwmodel {
     /** Bedwars player/team color. */
     enum class PlayerColor {
@@ -24,4 +26,9 @@ namespace bwmodel {
 
     /** The number of players in a bedwars game. */
     constexpr int PLAYER_COUNT = *PlayerColor::_PLAYER_COUNT;
+
+    namespace PlayerColorHelper {
+        /** @returns The name of player color. */
+        std::string name(PlayerColor color);
+    }
 }
