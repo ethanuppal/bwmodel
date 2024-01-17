@@ -39,7 +39,8 @@ namespace bwmodel {
         /** TODO: document. basically this is when you have one player kill
          * another so you can know they are in the same location but you don't
          * know where so you just adjust both players location heat maps to
-         * reflect this */
+         * reflect this. the other player obviously just gets put back at their
+         * base but you get the idea. */
         void merge_with(HeatMap& other);
 
         /** Creates a uniformly-distributed heat map with dimensions `width` and

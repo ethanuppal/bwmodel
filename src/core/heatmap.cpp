@@ -67,7 +67,6 @@ namespace bwmodel {
             }
         }
         distribution = result;
-        other.distribution = result;
     }
 
     std::unique_ptr<HeatMap> HeatMap::uniform(int width, int height) {
