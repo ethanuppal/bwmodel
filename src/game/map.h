@@ -100,5 +100,8 @@ namespace bwmodel {
     namespace RegionSetHelper {
         /** Retrieves the region mask representing the player color `color`. */
         RegionSet from(PlayerColor color);
+
+        /** Retrieves the region mask represented by the character `value`. */
+        RegionSet from(char value);
     }
 }

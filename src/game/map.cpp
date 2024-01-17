@@ -44,13 +44,13 @@ namespace bwmodel {
                                + path);
         }
 
-        /** Prepare map to return */
+        // Prepare map to return
         GridRow<RegionSet> grid_row(width, RegionSet::INVALID);
         std::shared_ptr<Grid<RegionSet>> grid =
             std::make_shared<Grid<RegionSet>>(height, grid_row);
         std::unique_ptr<Map> result(new Map(grid));
 
-        /** Parse grid */
+        // Parse grid
         for (blocks_t j = 0; j < height; j++) {
             for (blocks_t i = 0; i < width; i++) {
                 std::string entry;
@@ -63,28 +63,7 @@ namespace bwmodel {
                 }
 
                 for (char region: entry) {
-                    switch (toupper(region)) {
-                        case 'B':
-                            (*grid)[j][i] |= RegionSet::BASE;
-                            break;
-                        case 'E':
-                            (*grid)[j][i] |= RegionSet::EMPTY;
-                            break;
-                        case 'D':
-                            (*grid)[j][i] |= RegionSet::DIAMOND;
-                            break;
-                        case 'M':
-                            (*grid)[j][i] |= RegionSet::MIDDLE;
-                            break;
-                        default: {
-                            if (region >= '1' && region <= '8') {
-                                RegionSetBacking color =
-                                    1 << (8 + (region - '1'));
-                                (*grid)[j][i] |= static_cast<RegionSet>(color);
-                            }
-                            break;
-                        }
-                    }
+                    (*grid)[j][i] |= RegionSetHelper::from(region);
                 }
 
                 if ((*grid)[j][i] == RegionSet::INVALID) {
@@ -101,5 +80,25 @@ namespace bwmodel {
 
     RegionSet RegionSetHelper::from(PlayerColor color) {
         return static_cast<RegionSet>(1 << (8 + *color));
+    }
+
+    RegionSet RegionSetHelper::from(char value) {
+        switch (toupper(value)) {
+            case 'B':
+                return RegionSet::BASE;
+            case 'E':
+                return RegionSet::EMPTY;
+            case 'D':
+                return RegionSet::DIAMOND;
+            case 'M':
+                return RegionSet::MIDDLE;
+            default: {
+                if (value >= '1' && value <= '8') {
+                    RegionSetBacking color = 1 << (8 + (value - '1'));
+                    return static_cast<RegionSet>(color);
+                }
+                return RegionSet::INVALID;
+            }
+        }
     }
 }
