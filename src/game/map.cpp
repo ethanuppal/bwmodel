@@ -5,13 +5,13 @@
 #include "game/map.h"
 
 namespace bwmodel {
-    Map::Map(Grid<RegionSet>& grid): grid(grid) {
-        assert(!grid.empty());
+    Map::Map(std::shared_ptr<Grid<RegionSet>> grid): grid(grid) {
+        assert(!grid->empty());
         assert_grid_invariant();
     }
 
     const Grid<RegionSet>& Map::backing() const {
-        return grid;
+        return *grid;
     }
 
     bool Map::update_region(blocks_t x, blocks_t y, RegionSet regions) {
@@ -19,20 +19,18 @@ namespace bwmodel {
         if (current == RegionSet::INVALID) {
             return false;
         } else {
-            if (current == RegionSet::UNINIT) {
-                grid[y][x] = regions;
-            } else {
-                grid[y][x] = current | regions;
-            }
+            (*grid)[y / REGION_H][x / REGION_W] |= regions;
             return true;
         }
     }
 
     RegionSet Map::regions_at(blocks_t x, blocks_t y) const {
-        if (x < 0 || y < 0 || x >= width() || y >= height()) {
+        if (x < 0 || y < 0 || x >= REGION_W * width()
+            || y >= REGION_H * height()) {
             return RegionSet::INVALID;
         }
-        return grid[y][x];
+        assert((*grid)[y / REGION_H][x / REGION_W] != RegionSet::INVALID);
+        return (*grid)[y / REGION_H][x / REGION_W];
     }
 
     std::unique_ptr<Map> Map::load_from(const std::string& path) {
@@ -47,8 +45,9 @@ namespace bwmodel {
         }
 
         /** Prepare map to return */
-        GridRow<RegionSet> grid_row(width, RegionSet::UNINIT);
-        Grid<RegionSet> grid(height, grid_row);
+        GridRow<RegionSet> grid_row(width, RegionSet::INVALID);
+        std::shared_ptr<Grid<RegionSet>> grid =
+            std::make_shared<Grid<RegionSet>>(height, grid_row);
         std::unique_ptr<Map> result(new Map(grid));
 
         /** Parse grid */
@@ -59,44 +58,39 @@ namespace bwmodel {
 
                 if (in.fail() || in.bad()) {
                     throw MapLoadError(
-                        "Error reading entry at (x=" + std::to_string(i)
-                        + ", y=" + std::to_string(j) + ") in file: " + path);
+                        "Error reading entry at (col=" + std::to_string(i)
+                        + ", row=" + std::to_string(j) + ") in file: " + path);
                 }
 
                 for (char region: entry) {
                     switch (toupper(region)) {
                         case 'B':
-                            assert(result->update_region(i, j,
-                                RegionSet::BASE));
+                            (*grid)[j][i] |= RegionSet::BASE;
                             break;
                         case 'E':
-                            assert(result->update_region(i, j,
-                                RegionSet::EMPTY));
+                            (*grid)[j][i] |= RegionSet::EMPTY;
                             break;
                         case 'D':
-                            assert(result->update_region(i, j,
-                                RegionSet::DIAMOND));
+                            (*grid)[j][i] |= RegionSet::DIAMOND;
                             break;
                         case 'M':
-                            assert(result->update_region(i, j,
-                                RegionSet::MIDDLE));
+                            (*grid)[j][i] |= RegionSet::MIDDLE;
                             break;
                         default: {
                             if (region >= '1' && region <= '8') {
                                 RegionSetBacking color =
                                     1 << (8 + (region - '1'));
-                                assert(result->update_region(i, j,
-                                    static_cast<RegionSet>(color)));
+                                (*grid)[j][i] |= static_cast<RegionSet>(color);
                             }
                             break;
                         }
                     }
                 }
 
-                if (result->regions_at(i, j) == RegionSet::UNINIT) {
+                if ((*grid)[j][i] == RegionSet::INVALID) {
                     throw MapLoadError("Error parsing entry '" + entry
-                                       + "' at (x=" + std::to_string(i)
-                                       + ", y=" + std::to_string(j)
+                                       + "' at (col=" + std::to_string(i)
+                                       + ", row=" + std::to_string(j)
                                        + ") in file: " + path);
                 }
             }

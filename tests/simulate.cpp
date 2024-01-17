@@ -22,13 +22,12 @@ int main() {
         for (int i = 0; i < PLAYER_COUNT; i++) {
             if (i != *PlayerColor::BLUE) {
                 int local_i = i;
-                simulator.sequence(500 * (local_i + off),
-                    [local_i](Game& game) {
-                        game.notify_break_bed(PlayerColor::BLUE,
-                            static_cast<PlayerColor>(local_i));
-                        game.notify_player_kill(PlayerColor::BLUE,
-                            static_cast<PlayerColor>(local_i));
-                    });
+                simulator.sequence(20 * (local_i + off), [local_i](Game& game) {
+                    game.notify_break_bed(PlayerColor::BLUE,
+                        static_cast<PlayerColor>(local_i));
+                    game.notify_player_kill(PlayerColor::BLUE,
+                        static_cast<PlayerColor>(local_i));
+                });
             } else {
                 off--;
             }
