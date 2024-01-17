@@ -4,7 +4,8 @@
 #include "util/logger.h"
 
 namespace bwmodel {
-    Game::Game(std::unique_ptr<Map> map): _map(std::move(map)) {
+    Game::Game(std::unique_ptr<Map> map, PlayerColor me)
+        : _map(std::move(map)), _me(me) {
         std::fill(_player_beds.begin(), _player_beds.end(), true);
         for (int i = 0; i < PLAYER_COUNT; i++) {
             _players_left.insert(static_cast<PlayerColor>(i));
@@ -21,6 +22,10 @@ namespace bwmodel {
         return (uint64_t)std::chrono::duration_cast<std::chrono::milliseconds>(
             duration_since_start)
             .count();
+    }
+
+    PlayerColor Game::me() const {
+        return _me;
     }
 
     const std::set<PlayerColor>& Game::players_left() const {

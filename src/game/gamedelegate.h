@@ -3,6 +3,7 @@
 #pragma once
 
 #include "game/player.h"
+#include "game/map.h"
 
 namespace bwmodel {
     class Game;
@@ -27,5 +28,12 @@ namespace bwmodel {
         /** Called repeatedly from after `on_game_start` until before
          * `on_game_end`. */
         virtual void tick(const Game& game) = 0;
+
+        /** Called when the player position are updated. */
+        virtual void on_player_move(const Game& game, int x, int y);
+
+        /** Called when the player sees player `spotted` at `location`. */
+        virtual void on_player_sight(const Game& game, PlayerColor spotted,
+            RegionSet location);
     };
 }
