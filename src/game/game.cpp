@@ -33,7 +33,7 @@ namespace bwmodel {
 
     void Game::attach(std::shared_ptr<GameDelegate> delegate) {
         delegates.push_back(delegate);
-        Log << "attached delegate " << delegate << '\n';
+        BW_Log << "attached delegate " << delegate << '\n';
     }
 
     void Game::notify_start() {
@@ -41,15 +41,15 @@ namespace bwmodel {
             delegate->on_game_start(*this);
         }
         start_time = std::chrono::steady_clock::now();
-        Log << "(0ms) game started\n";
+        BW_Log << "(0ms) game started\n";
     }
 
     void Game::notify_end() {
         for (auto delegate: delegates) {
             delegate->on_game_end(*this);
         }
-        Log << "(" << time() << "ms) "
-            << "game ended\n";
+        BW_Log << "(" << time() << "ms) "
+               << "game ended\n";
     }
 
     bool Game::should_end() const {
@@ -74,9 +74,9 @@ namespace bwmodel {
             was_final = true;
         }
 
-        Log << "(" << time() << "ms) " << PlayerColorHelper::name(victor)
-            << " killed " << PlayerColorHelper::name(loser)
-            << (was_final ? " (final kill!)" : "") << '\n';
+        BW_Log << "(" << time() << "ms) " << PlayerColorHelper::name(victor)
+               << " killed " << PlayerColorHelper::name(loser)
+               << (was_final ? " (final kill!)" : "") << '\n';
 
         for (auto delegate: delegates) {
             delegate->on_players_match(*this, victor, loser, was_final);
@@ -91,8 +91,8 @@ namespace bwmodel {
         // update bed status
         _player_beds[*bed] = false;
 
-        Log << "(" << time() << "ms) " << PlayerColorHelper::name(breaker)
-            << " broke " << PlayerColorHelper::name(bed) << "'s bed\n";
+        BW_Log << "(" << time() << "ms) " << PlayerColorHelper::name(breaker)
+               << " broke " << PlayerColorHelper::name(bed) << "'s bed\n";
 
         for (auto delegate: delegates) {
             delegate->on_bed_broken(*this, breaker, bed);

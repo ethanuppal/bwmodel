@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cassert>
 #include "bwmodel.h"
+#include "efsw/include/efsw/efsw.hpp"
 using namespace bwmodel;
 
 int main() {
@@ -10,6 +11,8 @@ int main() {
         // create game for map
         std::unique_ptr<Map> map = Map::load_from("./data/example.bwmap");
         Game game(std::move(map));
+
+        efsw::FileWatcher watcher;
 
         // we want to test our v1 model
         std::shared_ptr<GameDelegate> model = Model::v1::make();

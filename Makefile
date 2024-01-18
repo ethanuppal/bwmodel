@@ -15,11 +15,16 @@ SRC			:= $(shell find $(SRCDIR) -name "*.cpp" -type f)
 OBJ			:= $(SRC:.cpp=.o)
 
 $(TARGET): main.cpp $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) -Lefsw -lefsw $^ -o $@
 
 %.o: %.cpp
 	@echo 'Compiling $@'
 	$(CC) $(CFLAGS) -MMD -MP $< -c -o $@
+
+.PHONY: library
+library:
+	cmake efsw
+	make -C efsw
 
 .PHONY: clean
 clean:
