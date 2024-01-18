@@ -1,5 +1,7 @@
 # bwmodel: A modeling environment for Minecraft Bedwars
 
+[![CodeFactor](https://www.codefactor.io/repository/github/ethanuppal/bwmodel/badge)](https://www.codefactor.io/repository/github/ethanuppal/bwmodel)
+
 This project is an API for creating predictive models for Minecraft Bedwars—as well as an implementation of such models—using only information that would be available to a player.
 The idea is that a computer can process much more than a human brain can.
 For example, when one player kills another, it is likely that it was in hand-to-hand combat.

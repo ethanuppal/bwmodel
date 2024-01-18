@@ -10,25 +10,25 @@ int main() {
 
     try {
         std::unique_ptr<Map> map = Map::load_from("./data/example.bwmap");
-        Game game(std::move(map));
+        PlayerColor me = PlayerColor::BLUE;
+        Game game(std::move(map), me);
 
         std::shared_ptr<GameDelegate> model = Model::v1::make();
         game.attach(model);
 
         Simulator simulator;
 
-        // blue about to POP OFF
+        // we are about to POP OFF
         int off = 1;
         for (int i = 0; i < PLAYER_COUNT; i++) {
-            if (i != *PlayerColor::BLUE) {
+            if (i != *me) {
                 int local_i = i;
-                simulator.sequence(500 * (local_i + off),
-                    [local_i](Game& game) {
-                        game.notify_break_bed(PlayerColor::BLUE,
-                            static_cast<PlayerColor>(local_i));
-                        game.notify_player_kill(PlayerColor::BLUE,
-                            static_cast<PlayerColor>(local_i));
-                    });
+                simulator.sequence(20 * (i + off), [me, local_i](Game& game) {
+                    game.notify_break_bed(me,
+                        static_cast<PlayerColor>(local_i));
+                    game.notify_player_kill(me,
+                        static_cast<PlayerColor>(local_i));
+                });
             } else {
                 off--;
             }

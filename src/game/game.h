@@ -16,20 +16,25 @@ namespace bwmodel {
     /** Models a bedwars game. */
     class Game {
         std::unique_ptr<Map> _map;
+        PlayerColor _me;
         std::array<bool, PLAYER_COUNT> _player_beds;
         std::set<PlayerColor> _players_left;
         std::vector<std::shared_ptr<GameDelegate>> delegates;
         std::chrono::time_point<std::chrono::steady_clock> start_time;
 
     public:
-        /** Constructs a new game from `map`, taking ownership of it. */
-        Game(std::unique_ptr<Map> map);
+        /** Constructs a new game from `map`, taking ownership of it. See
+         * Game::me() for information about `me`. */
+        Game(std::unique_ptr<Map> map, PlayerColor me);
 
         /** @returns The game map. */
         const Map& map() const;
 
         /** The time in milliseconds since the game started. */
         uint64_t time() const;
+
+        /** The player whose perspective this game is played from. */
+        PlayerColor me() const;
 
         /** A list of remaining players. */
         const std::set<PlayerColor>& players_left() const;

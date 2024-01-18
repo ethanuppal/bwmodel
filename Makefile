@@ -43,9 +43,10 @@ run: build
 .PHONY: test
 test: CFLAGS += -DNO_LOGGING
 test: $(OBJ)
-	@for f in $(TESTSDIR)/*; do \
+	@for f in $(TESTSDIR)/*.cpp; do \
 		echo "  testing $$f"; \
 		$(CC) $(CFLAGS) "$$f" $^ -o $(TESTSDIR)/tmpexec; \
 		$(TESTSDIR)/tmpexec && printf "\033[32m+ test $$f passed\033[m\n" || printf "\033[31m- test $$f failed\033[m\n"; \
 	done; \
-	rm -rf $(TESTSDIR)/tmpexec
+	find $(TESTSDIR) -type f -not -name "*.cpp" -delete; \
+	rm -rf $(TESTSDIR)/tmpexec.dSYM

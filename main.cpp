@@ -48,7 +48,8 @@ int main() {
     try {
         // create game for map
         std::unique_ptr<Map> map = Map::load_from("./data/example.bwmap");
-        Game game(std::move(map));
+        PlayerColor me = PlayerColor::BLUE;
+        Game game(std::move(map), me);
 
         // we want to test our v1 model
         std::shared_ptr<GameDelegate> model = Model::v1::make();

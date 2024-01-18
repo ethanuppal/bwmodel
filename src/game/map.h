@@ -26,10 +26,10 @@ namespace bwmodel {
 
     /** Defines the properties of a region on the map. */
     enum class RegionSet : RegionSetBacking {
-        BASE = 1 << 1,
-        EMPTY = 1 << 2,
-        DIAMOND = 1 << 3,
-        MIDDLE = 1 << 4,
+        BASE = 1 << 0,
+        EMPTY = 1 << 1,
+        DIAMOND = 1 << 2,
+        MIDDLE = 1 << 3,
 
         RED = 1 << (8 + *PlayerColor::RED),
         BLUE = 1 << (8 + *PlayerColor::BLUE),
@@ -40,13 +40,16 @@ namespace bwmodel {
         BLACK = 1 << (8 + *PlayerColor::BLACK),
         PINK = 1 << (8 + *PlayerColor::PINK),
 
-        INVALID = 0,
-        UNINIT = 1
+        INVALID = 0
     };
 
     inline RegionSet operator|(RegionSet lhs, RegionSet rhs) {
         return static_cast<RegionSet>(static_cast<RegionSetBacking>(lhs)
                                       | static_cast<RegionSetBacking>(rhs));
+    }
+
+    inline void operator|=(RegionSet& lhs, RegionSet rhs) {
+        lhs = lhs | rhs;
     }
 
     /** @see Map::load_from */
@@ -58,14 +61,14 @@ namespace bwmodel {
     /** Defines the regions in a bedwars map. */
     class Map : public GridInterface<RegionSet, blocks_t> {
         /** The internal grid representation of the map in row-major order. */
-        Grid<RegionSet> grid;
+        std::shared_ptr<Grid<RegionSet>> grid;
 
         /**
          * Constructs a new map from the given `grid`.
          *
          * @pre `grid` is in row-major order and has at least one row.
          */
-        Map(Grid<RegionSet>& grid);
+        Map(std::shared_ptr<Grid<RegionSet>> grid);
 
     protected:
         const Grid<RegionSet>& backing() const override;
@@ -73,8 +76,7 @@ namespace bwmodel {
     public:
         /**
          * Adds the regions given by `regions` to the the given (`x`, `y`)
-         * coordinates. If the current region is `RegionSet::UNINIT`, it gets
-         * replaced.
+         * coordinates.
          *
          * @returns Whether the addition was in-range.
          */
@@ -98,5 +100,8 @@ namespace bwmodel {
     namespace RegionSetHelper {
         /** Retrieves the region mask representing the player color `color`. */
         RegionSet from(PlayerColor color);
+
+        /** Retrieves the region mask represented by the character `value`. */
+        RegionSet from(char value);
     }
 }
