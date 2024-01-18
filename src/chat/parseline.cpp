@@ -41,17 +41,30 @@ namespace bwmodel {
             [](char c) { return std::isspace(c); });
     }
 
+    bool is_game_start(const std::vector<ColorSection>& sections) {
+        return sections.size() == 2 && sections[0].color == "000"
+               && is_white_space(sections[0].text) && sections[1].color == "000"
+               && sections[1].text == "Bed Wars";
+    }
+
+    bool is_bed_destruction(const std::vector<ColorSection>& sections) {
+        return sections.size() == 7 && sections[0].color == "000"
+               && sections[0].text.find("BED DESTRUCTION") != std::string::npos;
+    }
+
+    bool is_kill(const std::vector<ColorSection>& sections) {
+        return sections.size() == 4
+               || (sections.size() == 5 && sections[4].text == "FINAL KILL!");
+    }
+
     std::optional<Event> parse_line(const std::string& line) {
         auto sections = parse_color_sections(line);
 
-        if (sections.size() == 2 && sections[0].color == "000"
-            && is_white_space(sections[0].text) && sections[1].color == "000"
-            && sections[1].text == "Bed Wars") {
+        if (is_game_start(sections)) {
             return [](Game& game) { game.notify_start(); };
         }
 
-        if (sections.size() == 7 && sections[0].color == "000"
-            && sections[0].text.find("BED DESTRUCTION") != std::string::npos) {
+        if (is_bed_destruction(sections)) {
             auto opt_bed_color = color_from_str(sections[2].color);
             auto opt_player_color = color_from_str(sections[5].color);
 
@@ -65,8 +78,7 @@ namespace bwmodel {
             };
         }
 
-        if (sections.size() == 4
-            || (sections.size() == 5 && sections[4].text == "FINAL KILL!")) {
+        if (is_kill(sections)) {
             auto opt_killed = color_from_str(sections[0].color);
             auto opt_killer = color_from_str(sections[2].color);
 

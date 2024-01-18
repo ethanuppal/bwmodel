@@ -73,7 +73,6 @@ int main() {
         std::cout << "Watching for changes...\n";
         std::cout << "Press enter to exit.\n";
         std::cin.get();
-
     } catch (const MapLoadError& error) {
         std::cerr << "MapLoadError: " << error.what() << '\n';
         return 1;
