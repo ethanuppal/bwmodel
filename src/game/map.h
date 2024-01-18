@@ -37,7 +37,7 @@ namespace bwmodel {
         AQUA = 1 << (8 + *PlayerColor::AQUA),
         YELLOW = 1 << (8 + *PlayerColor::YELLOW),
         WHITE = 1 << (8 + *PlayerColor::WHITE),
-        BLACK = 1 << (8 + *PlayerColor::GRAY),
+        BLACK = 1 << (8 + *PlayerColor::BLACK),
         PINK = 1 << (8 + *PlayerColor::PINK),
 
         INVALID = 0,

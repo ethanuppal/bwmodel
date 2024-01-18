@@ -13,7 +13,7 @@ namespace bwmodel {
         AQUA,
         YELLOW,
         WHITE,
-        GRAY,
+        BLACK,
         PINK,
         _PLAYER_COUNT
     };

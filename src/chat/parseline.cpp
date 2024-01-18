@@ -1,29 +1,59 @@
 #include "parseline.h"
 #include <regex>
+#include <algorithm>
 #include "game/player.h"
 
 namespace bwmodel {
-    std::optional<Event> parse_line(const std::string& line) {
-        if (line.find("<span style=\"color: #000;\">Bed Wars</span>")
-            != std::string::npos) {
-            return [](Game& game) { game.notify_start(); };
-        }
+    // TODO: incomplete/untested
+    std::optional<PlayerColor> color_from_str(const std::string& str) {
+        if (str == "000") return PlayerColor::BLACK;
+        if (str == "55F") return PlayerColor::BLUE;
+        if (str == "5F5") return PlayerColor::GREEN;
+        if (str == "5FF") return PlayerColor::AQUA;
+        if (str == "F55") return PlayerColor::RED;
+        if (str == "F5F") return PlayerColor::PINK;
+        if (str == "FF5") return PlayerColor::YELLOW;
+        if (str == "AAA") return PlayerColor::WHITE;
+        return {};
+    }
 
-        std::regex color_regex("<span style=\"color: #(.*?);\">.*?<\\/span>",
+    std::vector<ColorSection> parse_color_sections(const std::string& line) {
+        std::regex color_regex("<span style=\"color: #(.*?);\">(.*?)<\\/span>",
             std::regex_constants::ECMAScript);
         std::smatch matches;
 
-        std::vector<std::string> colors;
+        std::vector<ColorSection> sections;
 
-        while (std::regex_search(line, matches, color_regex)) {
-            assert(matches.size() == 2);
-            colors.push_back(matches[1]);
+        // StackOverflow Answer: https://stackoverflow.com/a/35026140
+        std::string::const_iterator search_start(line.cbegin());
+        while (std::regex_search(search_start, line.cend(), matches,
+            color_regex)) {
+            assert(matches.size() == 3);
+            sections.push_back({matches[1], matches[2]});
+            search_start = matches.suffix().first;
         }
 
-        if (colors.size() == 7
-            && line.find("BED DESTRUCTION") != std::string::npos) {
-            auto opt_bed_color = color_from_str(colors[2]);
-            auto opt_player_color = color_from_str(colors[5]);
+        return sections;
+    }
+
+    bool is_white_space(const std::string& str) {
+        return std::all_of(str.cbegin(), str.cend(),
+            [](char c) { return std::isspace(c); });
+    }
+
+    std::optional<Event> parse_line(const std::string& line) {
+        auto sections = parse_color_sections(line);
+
+        if (sections.size() == 2 && sections[0].color == "000"
+            && is_white_space(sections[0].text) && sections[1].color == "000"
+            && sections[1].text == "Bed Wars") {
+            return [](Game& game) { game.notify_start(); };
+        }
+
+        if (sections.size() == 7 && sections[0].color == "000"
+            && sections[0].text.find("BED DESTRUCTION") != std::string::npos) {
+            auto opt_bed_color = color_from_str(sections[2].color);
+            auto opt_player_color = color_from_str(sections[5].color);
 
             if (!opt_bed_color.has_value() || !opt_player_color.has_value()) {
                 return {};
@@ -35,9 +65,10 @@ namespace bwmodel {
             };
         }
 
-        if (colors.size() == 4) {
-            auto opt_killed = color_from_str(colors[0]);
-            auto opt_killer = color_from_str(colors[2]);
+        if (sections.size() == 4
+            || (sections.size() == 5 && sections[4].text == "FINAL KILL!")) {
+            auto opt_killed = color_from_str(sections[0].color);
+            auto opt_killer = color_from_str(sections[2].color);
 
             if (!opt_killed.has_value() || !opt_killer.has_value()) {
                 return {};
@@ -48,19 +79,6 @@ namespace bwmodel {
             };
         }
 
-        return {};
-    }
-
-    // TODO: incomplete/untested
-    std::optional<PlayerColor> color_from_str(const std::string& str) {
-        if (str == "555") return PlayerColor::GRAY;
-        if (str == "55F") return PlayerColor::BLUE;
-        if (str == "5F5") return PlayerColor::GREEN;
-        if (str == "5FF") return PlayerColor::AQUA;
-        if (str == "F55") return PlayerColor::RED;
-        if (str == "F5F") return PlayerColor::PINK;
-        if (str == "FF5") return PlayerColor::YELLOW;
-        if (str == "FFF") return PlayerColor::WHITE;
         return {};
     }
 }
