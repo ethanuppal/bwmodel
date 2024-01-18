@@ -15,6 +15,10 @@ TARGET		:= main
 SRC			:= $(shell find $(SRCDIR) -name "*.cpp" -type f)
 OBJ			:= $(SRC:.cpp=.o)
 
+.PHONY: build 
+build: library 
+	make $(TARGET)
+
 $(TARGET): main.cpp $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
@@ -33,7 +37,7 @@ clean:
 	make -C efsw clean
 
 .PHONY: run
-run: $(TARGET) $(OBJ)
+run: build
 	./$(TARGET)
 
 .PHONY: test
