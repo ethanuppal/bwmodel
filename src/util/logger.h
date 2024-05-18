@@ -70,5 +70,4 @@ public:
 };
 
 // See Logger::main
-#define BW_Log                                                                 \
-    Logger::main() << Logger::LocationInfo(__FILE__, __LINE__, __func__)
+#define Log Logger::main() << Logger::LocationInfo(__FILE__, __LINE__, __func__)

@@ -5,7 +5,6 @@ INCLUDEDIR	:= ./src
 TESTSDIR	:= ./tests
 
 CC			:= $(shell which g++ || which clang)
-LDFLAGS		:= -Lefsw -lefsw
 CFLAGS		:= -std=c++17 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
 CDEBUG		:= -g
 CRELEASE	:= -O2 -DRELEASE_BUILD
@@ -14,29 +13,21 @@ TARGET		:= main
 SRC			:= $(shell find $(SRCDIR) -name "*.cpp" -type f)
 OBJ			:= $(SRC:.cpp=.o)
 
-.PHONY: build 
-build: library 
-	make $(TARGET)
+CFLAGS += $(CDEBUG)
 
 $(TARGET): main.cpp $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $^ -o $@
 
 %.o: %.cpp
 	@echo 'Compiling $@'
 	$(CC) $(CFLAGS) -MMD -MP $< -c -o $@
 
-.PHONY: library
-library:
-	cmake -DBUILD_SHARED_LIBS=OFF efsw
-	make -C efsw
-
 .PHONY: clean
 clean:
 	rm -rf $(OBJ) $(TARGET) $(shell find . -name "*.dSYM")
-	make -C efsw clean
 
 .PHONY: run
-run: build
+run: $(TARGET) $(OBJ)
 	./$(TARGET)
 
 .PHONY: test
