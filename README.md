@@ -11,8 +11,8 @@ If a probability distribution of player locations is maintained, we can update t
 
 ## Usage
 
-You can use this run through the `Makefile`. You must have C++ 17.
-.
+You can use this project through the `Makefile`.
+You must have C++17.
 ```bash
 make        # builds the ./main script
 make run    # builds and runs the ./main script
