@@ -10,7 +10,7 @@ jobs:
   build_and_test:
     strategy:
       matrix:
-        os: [macos-13, macos-12, macos-14, ubuntu-latest]
+        os: [macos-13, macos-12, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
