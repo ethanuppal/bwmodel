@@ -1,6 +1,8 @@
 # bwmodel: A modeling environment for Minecraft Bedwars
 
 [![CodeFactor](https://www.codefactor.io/repository/github/ethanuppal/bwmodel/badge)](https://www.codefactor.io/repository/github/ethanuppal/bwmodel)
+![CI Badge](https://github.com/ethanuppal/bwmodel/actions/workflows/ci.yaml/badge.svg)
+
 
 This project is an API for creating predictive models for Minecraft Bedwars—as well as an implementation of such models—using only information that would be available to a player.
 The idea is that a computer can process much more than a human brain can.
@@ -9,7 +11,8 @@ If a probability distribution of player locations is maintained, we can update t
 
 ## Usage/Building
 
-You can use this run through the `Makefile`. You must have C++ 17.
+You can use this project through the `Makefile`.
+You must have C++17.
 
 ```bash
 make         # builds the ./main script

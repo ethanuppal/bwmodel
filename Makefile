@@ -4,8 +4,7 @@ SRCDIR		:= ./src
 INCLUDEDIR	:= ./src
 TESTSDIR	:= ./tests
 
-CC			:= $(shell which g++-13 || \
-                       which g++ || which clang)
+CC			:= $(shell which g++ || which clang)
 LDFLAGS		:= -Lefsw -lefsw
 CFLAGS		:= -std=c++17 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
 CDEBUG		:= -g
