@@ -6,7 +6,8 @@ using namespace bwmodel;
 
 int main() {
     std::unique_ptr<Map> map = Map::load_from("./data/example.bwmap");
-    Game game(std::move(map));
+    Game game(std::move(map),
+        PlayerColor::WHITE /* we forgot the exact color */);
 
     // TODO: add game start test
     std::ifstream file("./data/example_chat.htm");
