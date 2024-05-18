@@ -4,9 +4,14 @@ SRCDIR		:= ./src
 INCLUDEDIR	:= ./src
 TESTSDIR	:= ./tests
 
-CC			:= $(shell which g++ || which clang)
-LDFLAGS		:= -Lefsw -lefsw
-CFLAGS		:= -std=c++17 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
+C_CC		:= $(shell which gcc || which clang)
+CPP_CC		:= $(shell which g++ || which clang)
+LDFLAGS		:= -Lbuild -lefsw
+ifeq ($(shell uname -s),Darwin)
+	LDFLAGS += -framework CoreFoundation -framework CoreServices
+endif
+CFLAGS		:= -std=c99 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
+CPPFLAGS	:= -std=c++17 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
 CDEBUG		:= -g
 CRELEASE	:= -O2 -DRELEASE_BUILD
 TARGET		:= main
@@ -19,21 +24,22 @@ build: library
 	make $(TARGET)
 
 $(TARGET): main.cpp $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CPP_CC) $(CPPFLAGS) $^ -o $@ $(LDFLAGS)
 
 %.o: %.cpp
 	@echo 'Compiling $@'
-	$(CC) $(CFLAGS) -MMD -MP $< -c -o $@
+	$(CPP_CC) $(CPPFLAGS) -MMD -MP $< -c -o $@
 
 .PHONY: library
 library:
-	cmake -DBUILD_SHARED_LIBS=OFF efsw
-	make -C efsw
+	git submodule update --init --recursive
+	CMAKE_C_COMPILER=$(C_CC) cmake -DBUILD_SHARED_LIBS=OFF -Bbuild efsw
+	cd build && make
 
 .PHONY: clean
 clean:
 	rm -rf $(OBJ) $(TARGET) $(shell find . -name "*.dSYM")
-	make -C efsw clean
+	cd efsw && make clean
 
 .PHONY: run
 run: build
