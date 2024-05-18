@@ -10,3 +10,4 @@
 #include "game/sim.h"
 #include "models/v1.h"
 #include "util/logger.h"
+#include "chat/parseline.h"
