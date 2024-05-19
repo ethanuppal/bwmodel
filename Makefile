@@ -7,11 +7,11 @@ TESTSDIR	:= ./tests
 C_CC		:= $(shell which gcc || which clang)
 CPP_CC		:= $(shell which g++ || which clang)
 LDFLAGS		:= -Lbuild -lefsw
-ifeq ($(shell uname -s),Darwin)
+ifeq ($(shell uname -s), Darwin)
 	LDFLAGS += -framework CoreFoundation -framework CoreServices
 endif
-CFLAGS		:= -std=c99 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
-CPPFLAGS	:= -std=c++17 -pedantic -Wall -Wextra -I $(INCLUDEDIR)
+CFLAGS		:= -std=c99 -pedantic -Wall -Wextra -I$(INCLUDEDIR) -Iefsw/include
+CPPFLAGS	:= -std=c++17 -pedantic -Wall -Wextra -I$(INCLUDEDIR) -Iefsw/include
 CDEBUG		:= -g
 CRELEASE	:= -O2 -DRELEASE_BUILD
 TARGET		:= main
@@ -50,8 +50,16 @@ test: CFLAGS += -DNO_LOGGING
 test: $(OBJ)
 	@for f in $(TESTSDIR)/*.cpp; do \
 		echo "  testing $$f"; \
-		$(CPP_CC) $(CPPFLAGS) "$$f" $^ -o $(TESTSDIR)/tmpexec; \
+		$(CPP_CC) $(CPPFLAGS) -Werror "$$f" $^ -o $(TESTSDIR)/tmpexec; \
 		$(TESTSDIR)/tmpexec && printf "\033[32m+ test $$f passed\033[m\n" || printf "\033[31m- test $$f failed\033[m\n"; \
 	done; \
 	find $(TESTSDIR) -type f -not -name "*.cpp" -delete; \
 	rm -rf $(TESTSDIR)/tmpexec.dSYM
+
+.PHONY: docs
+docs:
+	@if command -v doxygen > /dev/null; then \
+		doxygen; \
+	else \
+		echo "Install 'doxygen' to build the documentation"; exit 1; \
+	fi

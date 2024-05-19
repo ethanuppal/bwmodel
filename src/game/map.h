@@ -59,7 +59,7 @@ namespace bwmodel {
     };
 
     /** Defines the regions in a bedwars map. */
-    class Map : public GridInterface<RegionSet, blocks_t> {
+    class Map final : public GridInterface<RegionSet, blocks_t> {
         /** The internal grid representation of the map in row-major order. */
         std::shared_ptr<Grid<RegionSet>> grid;
 

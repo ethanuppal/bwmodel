@@ -3,12 +3,12 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
+#include <efsw/efsw.hpp>
 #include "bwmodel.h"
-#include "efsw/include/efsw/efsw.hpp"
 using namespace bwmodel;
 namespace fs = std::filesystem;
 
-class FileWatcherListener : public efsw::FileWatchListener {
+class FileWatcherListener final : public efsw::FileWatchListener {
     Game& game;
     const std::filesystem::path& filename;
     std::ifstream stream;
@@ -26,9 +26,9 @@ public:
         stream.close();
     }
 
-    void handleFileAction(efsw::WatchID watchid, const std::string& dir,
-        const std::string& filename, efsw::Action action,
-        std::string oldFilename) override {
+    void handleFileAction(efsw::WatchID __unused,
+        const std::string& dir __unused, const std::string& filename,
+        efsw::Action action, std::string old_filename __unused) override {
         if (action != efsw::Action::Modified || filename != this->filename)
             return;
 

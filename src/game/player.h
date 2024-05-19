@@ -5,7 +5,11 @@
 #include <string>
 
 namespace bwmodel {
-    /** Bedwars player/team color. */
+    /**
+     * @brief Bedwars player/team color.
+     *
+     * @enum PlayerColor
+     */
     enum class PlayerColor {
         RED,
         BLUE,
