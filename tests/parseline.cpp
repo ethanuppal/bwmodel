@@ -11,6 +11,8 @@ int main() {
 
     // TODO: add game start test
     std::ifstream file("./data/example_chat.htm");
+    // for now we just
+    game.notify_start();
 
     if (file.fail()) {
         std::cout << "Failed to open file\n";

@@ -13,7 +13,27 @@
 #include "game/gamedelegate.h"
 
 namespace bwmodel {
-    /** Models a bedwars game. */
+    /**
+     * Models a bedwars game.
+     *
+     * \par Modeling Instructions
+     *
+     * When a player `player` (`bwmodel::PlayerColor`) enters a bedwars game on
+     * a `map` (as a `std::unique_ptr` to bwmodel::Map), the game `Game(map,
+     * player)` will model that game until it ends.
+     *
+     * Before beginning the game lifecycle (see next section), you may attach
+     * delegates via Game::attach. In fact, you may do this at any point, but it
+     * likely you wish to do this at the start.
+     *
+     * \par Game Lifecycle
+     *
+     * 1. Call Game::notify_start once when the game begins.
+     * 2. Call Game::cycle as often as possible. In addition:
+     *     * Call Game::notify_player_kill when a player kills another.
+     *     * Call Game::notify_break_bed when a player breaks a bed.
+     * 3. Call Game::notify_end when the game ends (Game::should_end).
+     */
     class Game {
         std::unique_ptr<Map> _map;
         PlayerColor _me;
